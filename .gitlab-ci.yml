@@ -1,0 +1,87 @@
+stages:
+  - setup
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  KUBE_CONFIG: $KUBE_CONFIG
+  DEPLOYMENT: mspr-ci-api
+  NAMESPACE: mspr-ci-api
+  IMAGE_TAG: mspr-ci-api
+  DOCKER_HUB: thobre
+
+
+
+setup:
+  image: node:12
+  stage: setup
+  artifacts:
+    name: "artifacts-$CI_PIPELINE_ID"
+    expire_in: 1 hour
+    paths:
+      - node_modules/
+  script:
+    - npm ci
+#  tags:
+#    - mspr-ci-api
+
+
+
+test:
+  stage: test
+  script: echo "Running tests"
+
+
+
+#build:
+#  image: docker:19.03.1
+#  stage: build
+#  services:
+#    - docker:dind
+#  script:
+#    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+#    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+#  tags:
+#    - mspr-ci-api
+#  except:
+#    - master
+
+#build image:
+#  stage: build
+#  script:
+#  - docker build . -t $DOCKER_HUB/$IMAGE_TAG
+#  - docker run --rm $CI_REGISTRY_IMAGE:$IMAGE_TAG /script/to/run/tests
+#  - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+#  - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG
+
+master_tag:
+  image: docker:19.03.1
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - docker login registry.gitlab.com
+    - docker build -t registry.gitlab.com/cortovilainepsi/mspr-ci-api .
+    - docker push registry.gitlab.com/cortovilainepsi/mspr-ci-api
+#  tags:
+#    - mspr-ci-api
+  only:
+    - master
+
+
+
+deploy_staging:
+  stage: deploy
+  image: registry.gitlab.com/mspr-ci-api/docker-kubectl:latest
+  script:
+    - printf "$KUBE_CONFIG" > $HOME/.kube/config
+    - cat $HOME/.kube/config
+    - kubectl rollout restart deployment/mspr-ci-api -n $NAMESPACE
+  only:
+    - master
+#  tags:
+#    - mspr-ci-api

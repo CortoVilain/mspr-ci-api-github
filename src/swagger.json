@@ -1,0 +1,334 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is all the documentation for the project MSPR-CI's api",
+    "version": "1.0.0",
+    "title": "Swagger MSPR-CI",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "corto.vilain@epsi.fr"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "mspr.califourchon.wtf",
+  "basePath": "/mspr-ci/api-docs",
+  "tags": [
+    {
+      "name": "mspr-ci",
+      "description": "Everything about the project"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/mspr-ci/customers/{customerId}": {
+      "get": {
+        "tags": [
+          "mspr-ci"
+        ],
+        "summary": "Get a customer",
+        "description": "Get a customer by his Id",
+        "operationId": "getCustomerById",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customerId",
+            "description": "Id of processed customer",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GetCustomer"
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found"
+          }
+        }
+      }
+    },
+    "/mspr-ci/customers": {
+      "get": {
+        "tags": [
+          "mspr-ci"
+        ],
+        "summary": "Get customers",
+        "description": "Get all customers",
+        "operationId": "getCustomers",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GetCustomer"
+              }
+            }
+          },
+          "404": {
+            "description": "Customers not found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "mspr-ci"
+        ],
+        "summary": "Add a customer",
+        "description": "Add a customer",
+        "operationId": "addCustomer",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "L'objet  a besoin de 2 paramètres",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddCustomer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ajout de l'utilisateur #firstname #lastname"
+          }
+        }
+      }
+    },
+    "/mspr-ci/purchases/{customerId}": {
+      "get": {
+        "tags": [
+          "mspr-ci"
+        ],
+        "summary": "Get purchases",
+        "description": "Get all customer's purchases",
+        "operationId": "getPurchasesByCustomerId",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customerId",
+            "description": "Id of processed customer",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GetCustomerPurchases"
+              }
+            }
+          },
+          "404": {
+            "description": "Purchases not found"
+          }
+        }
+      }
+    },
+    "/mspr-ci/purchases": {
+      "post": {
+        "tags": [
+          "mspr-ci"
+        ],
+        "summary": "Add a purchase",
+        "description": "Add a purchase",
+        "operationId": "addPurchase",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "L'objet a besoin de 4 paramètres",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddPurchase"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ajout de l'achat de #quantity #product (s) à #unitPrice €chacun"
+          }
+        }
+      }
+    },
+    "/mspr-ci/turnovers": {
+      "get": {
+        "tags": [
+          "mspr-ci"
+        ],
+        "summary": "Get turnovers",
+        "description": "Get turnovers with and without taxes",
+        "operationId": "GetTurnovers",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GetTurnovers"
+              }
+            }
+          },
+          "404": {
+            "description": "Pet not found"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "GetCustomer": {
+      "type": "object",
+      "properties": {
+        "customer_id": {
+          "type": "string",
+          "example": "customerId"
+        },
+        "firstname": {
+          "type": "string",
+          "example": "customerFirstname"
+        },
+        "lastname": {
+          "type": "string",
+          "example": "customerLastname"
+        }
+      }
+    },
+    "AddCustomer": {
+      "type": "object",
+      "properties": {
+        "firstname": {
+          "type": "string",
+          "example": "customerFirstname"
+        },
+        "lastname": {
+          "type": "string",
+          "example": "customerLastname"
+        }
+      }
+    },
+    "GetCustomerPurchases": {
+      "type": "object",
+      "properties": {
+        "customer_id": {
+          "type": "string",
+          "example": "customerId"
+        },
+        "purchases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "purchase_id": {
+                "type": "string",
+                "example": "purchasesId"
+              },
+              "product": {
+                "type": "string",
+                "example": "productName"
+              },
+              "quantity": {
+                "type": "integer",
+                "example": 1
+              },
+              "unitPrice": {
+                "type": "number",
+                "example": 1.5
+              },
+              "purchaseDate": {
+                "type": "object",
+                "properties": {
+                  "_seconds": {
+                    "type": "integer",
+                    "example": 1000000000
+                  },
+                  "_nanosecond": {
+                    "type": "integer",
+                    "example": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "AddPurchase": {
+      "type": "object",
+      "properties": {
+        "customer_id": {
+          "type": "string",
+          "example": "customerId"
+        },
+        "product": {
+          "type": "string",
+          "example": "productName"
+        },
+        "quantity": {
+          "type": "integer",
+          "example": 1
+        },
+        "unitPrice": {
+          "type": "number",
+          "example": 1.5
+        }
+      }
+    },
+    "GetTurnovers": {
+      "type": "object",
+      "properties": {
+        "turnoverht": {
+          "type": "number",
+          "example": 1
+        },
+        "turnoverttc": {
+          "type": "number",
+          "example": 1.2
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
